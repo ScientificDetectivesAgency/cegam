@@ -9,7 +9,7 @@ respaldo_proyecto.zip
 db.sqlite3
 __pycache__/
 media/
-fotos/
+
 staticfiles/
 .env
 *.zip
