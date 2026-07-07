@@ -16,3 +16,10 @@ staticfiles/
 datos/Fotos GPS/
 scratch/
 serv_user.txt
+
+# Additional ignored files
+Base de datos*/
+costas.tar
+*.csv
+fotos_trasladadas_export.sql
+¡hha.txt

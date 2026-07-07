@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor V2 Responsivo - Quintana Roo</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- App CSS V2 -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_v2.css' %}?v=20">
+</head>
+<body>
+
+    <!-- Header Superior -->
+    <header class="app-header" style="position: absolute; top: 0; left: 0; right: 0; height: 60px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 2000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; align-items: center; padding: 0 24px; color: #f1f5f9; border-bottom: 1px solid #1e293b;">
+        <img src="{% static 'img/LOGO1.jpeg' %}" alt="Logo" style="height: 40px; margin-right: 15px; border-radius: 4px;">
+        <h1 class="header-title" style="font-size: 1.25rem; font-weight: 800; margin: 0; color: #f1f5f9; letter-spacing: -0.02em;">Visualizador Costero (Responsivo V2)</h1>
+        <!-- Navigation Menu -->
+        <nav style="margin-left: auto; display: flex; gap: 20px;">
+            <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.2s;">Inicio</a>
+            <a href="/acerca/" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.2s;">Acerca de</a>
+        </nav>
+    </header>
+
+    <!-- Panel de Diagnóstico (Bottom Sheet en móvil) -->
+    <div id="left-panel" class="side-panel left-panel hidden">
+        <button class="close-btn" id="close-left"><i class="fas fa-times"></i></button>
+        <h2 id="info-title">Diagnóstico</h2>
+        <div id="info-content" class="info-content">
+            <p class="empty-state">Selecciona un punto en el mapa para cargar su diagnóstico.</p>
+        </div>
+    </div>
+
+    <!-- Contenedor del Mapa -->
+    <div id="map" style="top: 60px; height: calc(100vh - 60px);"></div>
+
+    <!-- Panel de Fotos (Bottom Sheet en móvil) -->
+    <div id="right-panel" class="side-panel right-panel hidden">
+        <button class="close-btn" id="close-right"><i class="fas fa-times"></i></button>
+        <h2>Fotografías</h2>
+        <div id="photos-container" class="photos-container">
+            <p class="empty-state">Selecciona un punto para explorar la galería de fotos del tramo.</p>
+        </div>
+    </div>
+
+    <div class="map-controls">
+        <!-- 1. Vista Inicial (Refresh) -->
+        <button id="initial-view" class="control-btn" title="Restablecer Vista Inicial">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        
+        <!-- 2. Botón de Capas (Capa Base) - NUEVA POSICIÓN -->
+        <div style="position: relative;">
+            <button id="custom-layer-btn" class="control-btn" title="Cambiar Capa Base">
+                <i class="fas fa-layer-group"></i>
+            </button>
+            <div id="layer-menu" style="display: none; position: absolute; top: 55px; left: 50%; transform: translateX(-50%); background: white; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 150px; padding: 8px; z-index: 1001;">
+                <div class="layer-option" data-layer="sat" style="padding: 10px; cursor: pointer; border-radius: 8px; color: #334155; font-size: 0.9rem; font-weight: 500; transition: background 0.2s;">Esri Satélite</div>
+                <div class="layer-option" data-layer="ocean" style="padding: 10px; cursor: pointer; border-radius: 8px; color: #334155; font-size: 0.9rem; font-weight: 500; transition: background 0.2s;">Esri Océanos</div>
+                <div class="layer-option" data-layer="google" style="padding: 10px; cursor: pointer; border-radius: 8px; color: #334155; font-size: 0.9rem; font-weight: 500; transition: background 0.2s;">Google Híbrido</div>
+            </div>
+        </div>
+
+        <!-- 3. Botones de Zoom -->
+        <button id="zoom-in" class="control-btn" title="Acercar">
+            <i class="fas fa-plus"></i>
+        </button>
+        <button id="zoom-out" class="control-btn" title="Alejar">
+            <i class="fas fa-minus"></i>
+        </button>
+        
+        <!-- 4. Barra de búsqueda (Sin placeholder) -->
+        <div class="search-box">
+            <input type="text" id="map-search" autocomplete="off">
+        </div>
+
+        <!-- 5. Mostrar Diagnóstico -->
+        <button id="toggle-left-info" class="control-btn toggle-side-btn hidden" title="Mostrar Diagnóstico">
+            <i class="fas fa-file-alt"></i>
+        </button>
+
+        <!-- 6. Mostrar Fotos -->
+        <button id="toggle-right-info" class="control-btn toggle-side-btn hidden" title="Mostrar Fotos">
+            <i class="fas fa-images"></i>
+        </button>
+
+        <!-- 7. Mostrar Cultura Costera -->
+        <button id="toggle-bottom-info" class="control-btn toggle-info-btn hidden" title="Mostrar Cultura Costera">
+            <i class="fas fa-info-circle"></i>
+        </button>
+    </div>
+    
+    <!-- Barra de Información Inferior Contextual -->
+    <div id="bottom-info-bar" class="bottom-bar bottom-info-bar">
+        <div class="bottom-info-header">
+            <h2 id="bottom-bar-title">Detalles del Punto</h2>
+            <button id="close-bottom-bar" style="background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 1.2rem; transition: color 0.2s;"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="bottom-info-content" class="bottom-info-content">
+            <p class="empty-state">Selecciona un punto en el mapa para ver la información detallada.</p>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inicializar Mapa centrado en Quintana Roo
+            const map = L.map('map', {
+                zoomControl: false
+            }).setView([19.6713, -87.8732], 7);
+            
+            // Lógica de Zoom Personalizada
+            document.getElementById('zoom-in').addEventListener('click', () => map.zoomIn());
+            document.getElementById('zoom-out').addEventListener('click', () => map.zoomOut());
+
+            // Capas Base
+            const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri',
+                maxZoom: 19
+            }).addTo(map);
+
+            const oceanLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri',
+                maxZoom: 13
+            });
+
+            const googleHybrid = L.tileLayer('http://mt0.google.com/vt/lyrs=y&hl=es&x={x}&y={y}&z={z}', {
+                attribution: 'Map data &copy; Google',
+                maxZoom: 20
+            });
+
+            const baseMaps = { "sat": satLayer, "ocean": oceanLayer, "google": googleHybrid };
+
+            // Lógica de Capas
+            const layerBtn = document.getElementById('custom-layer-btn');
+            const layerMenu = document.getElementById('layer-menu');
+            layerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                layerMenu.style.display = layerMenu.style.display === 'none' ? 'block' : 'none';
+            });
+            document.addEventListener('click', () => { layerMenu.style.display = 'none'; });
+
+            document.querySelectorAll('.layer-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const layerKey = e.target.getAttribute('data-layer');
+                    Object.values(baseMaps).forEach(l => map.removeLayer(l));
+                    baseMaps[layerKey].addTo(map);
+                });
+            });
+
+            // Lógica Buscador Responsivo (V2)
+            const searchBox = document.getElementById('search-box-v2');
+            const searchInput = document.getElementById('map-search');
+            const searchBtn = document.getElementById('search-btn');
+
+            function toggleSearch() {
+                if (window.innerWidth <= 768) {
+                    searchBox.classList.toggle('expanded');
+                    if (searchBox.classList.contains('expanded')) {
+                        searchInput.style.display = 'block';
+                        searchInput.style.width = '100%';
+                        searchInput.focus();
+                    } else {
+                        searchInput.style.display = 'none';
+                        searchInput.style.width = '0';
+                    }
+                }
+            }
+
+            searchBtn.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && !searchBox.classList.contains('expanded')) {
+                    e.preventDefault();
+                    toggleSearch();
+                } else {
+                    doSearch(geojsonLayer);
+                }
+            });
+
+            // Paneles UI
+            const leftPanel = document.getElementById('left-panel');
+            const rightPanel = document.getElementById('right-panel');
+            document.getElementById('close-left').addEventListener('click', () => leftPanel.classList.add('hidden'));
+            document.getElementById('close-right').addEventListener('click', () => rightPanel.classList.add('hidden'));
+
+            let selectedLayer = null;
+            const defaultDropIcon = L.divIcon({
+                className: 'water-drop-icon',
+                html: '<i class="fas fa-tint" style="color: #0ea5e9; font-size: 18px; filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));"></i>',
+                iconSize: [18, 18], iconAnchor: [9, 18]
+            });
+            const activeDropIcon = L.divIcon({
+                className: 'water-drop-icon active',
+                html: '<i class="fas fa-tint" style="color: #1d4ed8; font-size: 28px; filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.6));"></i>',
+                iconSize: [28, 28], iconAnchor: [14, 28]
+            });
+
+            let geojsonLayer = null; // Declarada en scope superior para doSearch
+            
+            fetch('/api/puntos/')
+                .then(response => response.json())
+                .then(data => {
+                    geojsonLayer = L.geoJSON(data, {
+                        pointToLayer: (feature, latlng) => L.marker(latlng, { icon: defaultDropIcon }),
+                        onEachFeature: (feature, layer) => {
+                            layer.on('click', (e) => {
+                                // Limpiar tooltips previos
+                                geojsonLayer.eachLayer(l => l.closeTooltip());
+
+                                if (selectedLayer) selectedLayer.setIcon(defaultDropIcon);
+                                layer.setIcon(activeDropIcon);
+                                selectedLayer = layer;
+                                
+                                const targetLatLng = e.latlng || layer.getLatLng();
+                                map.flyTo(targetLatLng, 12, { animate: true, duration: 1.0 });
+                                fetchPlayaDetalle(feature.properties.identificador);
+                            });
+                        }
+                    }).addTo(map);
+                    if(data.features.length > 0) map.fitBounds(geojsonLayer.getBounds(), {padding: [50, 50]});
+                    
+                    document.getElementById('initial-view').addEventListener('click', () => {
+                        // 1. Limpiar selección de iconos
+                        if (selectedLayer) selectedLayer.setIcon(defaultDropIcon);
+                        selectedLayer = null;
+
+                        // 2. Cerrar paneles
+                        leftPanel.classList.add('hidden');
+                        rightPanel.classList.add('hidden');
+                        if (bottomBar) bottomBar.classList.remove('active');
+
+                        // 3. Ocultar botones de toggle explícitamente
+                        document.getElementById('toggle-left-info').classList.add('hidden');
+                        document.getElementById('toggle-right-info').classList.add('hidden');
+                        document.getElementById('toggle-bottom-info').classList.add('hidden');
+
+                        // 4. Resetear vista del mapa
+                        map.flyToBounds(geojsonLayer.getBounds(), {padding: [50, 50], duration: 1.2});
+                    });
+                });
+
+            function doSearch(lg) {
+                const term = searchInput.value.toLowerCase().trim();
+                if(!term) return;
+                
+                // Cerrar paneles para ver resultados
+                leftPanel.classList.add('hidden');
+                rightPanel.classList.add('hidden');
+
+                // Limpiar tooltips previos
+                lg.eachLayer(l => l.closeTooltip());
+
+                let foundLayers = [];
+                lg.eachLayer(layer => {
+                    const prop = layer.feature.properties;
+                    if((prop.nombre || "").toLowerCase().includes(term)) {
+                        layer.openTooltip();
+                        foundLayers.push(layer);
+                    }
+                });
+
+                if(foundLayers.length > 0) {
+                    const group = new L.featureGroup(foundLayers);
+                    map.flyToBounds(group.getBounds(), {padding: [100, 100], duration: 1.5});
+                    if (window.innerWidth <= 768) toggleSearch(); 
+                }
+            }
+
+            function fetchPlayaDetalle(id) {
+                fetch(`/api/playas/${id}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const infoTitle = document.getElementById('info-title');
+                        const infoContent = document.getElementById('info-content');
+                        
+                        infoTitle.innerHTML = `Diagnóstico`;
+                        infoContent.innerHTML = data.descripcion; // Regresar tarjetas al panel
+                        
+                        // Poblar barra inferior con texto educativo
+                        const bottomBarTitle = document.getElementById('bottom-bar-title');
+                        const bottomBarContent = document.getElementById('bottom-info-content');
+                        bottomBarTitle.innerText = `Cultura Costera: ${data.nombre}`;
+                        bottomBarContent.innerHTML = `
+                            <p style="text-align: justify; font-size: 0.9rem;">Una playa es un accidente geográfico junto a una masa de agua que consta de partículas sueltas. Las partículas que componen una playa suelen estar hechas de roca, como arena, grava, guijarros, etc., o de fuentes biológicas, como conchas de moluscos o algas coralinas. Los sedimentos se depositan en diferentes densidades y estructuras, dependiendo de la acción del oleaje local y el clima, creando diferentes texturas, colores y gradientes o capas de material.</p>
+                            <p style="text-align: justify; margin-top: 10px; font-size: 0.9rem;">Todas las playas se encuentran en áreas costeras donde la acción de las olas o de las corrientes marinas deposita y repasa los sedimentos. La erosión costera y el cambio de las geologías de las playas se producen a través de procesos naturales, como la acción de las olas y los fenómenos meteorológicos extremos. Donde las condiciones del viento son adecuadas, las playas pueden estar respaldadas por dunas costeras que ofrecen protección y regeneración para la playa. Sin embargo, estas fuerzas naturales se han vuelto más extremas debido al cambio climático, alterando permanentemente las playas a un ritmo muy rápido. Algunas estimaciones predicen que hasta el 50 por ciento de las playas arenosas de la tierra desaparecerán para el 2100 debido al aumento del nivel del mar impulsado por el cambio climático.</p>
+                        `;
+                        
+                        document.getElementById('bottom-info-bar').classList.add('active');
+                        document.getElementById('toggle-bottom-info').classList.remove('hidden');
+                        
+                        document.getElementById('toggle-left-info').classList.remove('hidden');
+                        document.getElementById('toggle-right-info').classList.remove('hidden');
+
+                        leftPanel.classList.remove('hidden');
+                        
+                        const photosContainer = document.getElementById('photos-container');
+                        if(data.fotos && data.fotos.length > 0) {
+                            let photosHTML = '';
+                            data.fotos.forEach(foto => {
+                                photosHTML += `
+                                    <div class="photo-card" style="background: rgba(30, 41, 59, 0.4); border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                                        <img src="${foto.url}" alt="${foto.leyenda}" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px; display: block;" />
+                                        <div style="margin-top: 10px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 4px; text-align: center;">
+                                            <span style="color: #cbd5e1; font-size: 0.85rem; font-style: italic;">ID Visual: ${data.nombre}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            photosContainer.innerHTML = photosHTML;
+                        } else {
+                            photosContainer.innerHTML = '<p class="empty-state">No hay fotos disponibles.</p>';
+                        }
+                        rightPanel.classList.remove('hidden');
+                    });
+            }
+        });
+
+        // Lógica para la barra inferior
+        const bottomBar = document.getElementById('bottom-info-bar');
+        const toggleBtn = document.getElementById('toggle-bottom-info');
+        const closeBottomBtn = document.getElementById('close-bottom-bar');
+        
+        const leftPanel = document.getElementById('left-panel');
+        const toggleLeftBtn = document.getElementById('toggle-left-info');
+        const closeLeftBtn = document.getElementById('close-left');
+        
+        const rightPanel = document.getElementById('right-panel');
+        const toggleRightBtn = document.getElementById('toggle-right-info');
+        const closeRightBtn = document.getElementById('close-right');
+
+        // Logic for Bottom Bar
+        toggleBtn.addEventListener('click', () => {
+            bottomBar.classList.toggle('active');
+            toggleBtn.classList.toggle('hidden', bottomBar.classList.contains('active'));
+        });
+        closeBottomBtn.addEventListener('click', () => {
+            bottomBar.classList.remove('active');
+            toggleBtn.classList.remove('hidden');
+        });
+
+        // Logic for Left Panel
+        toggleLeftBtn.addEventListener('click', () => {
+            leftPanel.classList.toggle('hidden');
+            toggleLeftBtn.classList.toggle('hidden', !leftPanel.classList.contains('hidden'));
+        });
+        closeLeftBtn.addEventListener('click', () => {
+            leftPanel.classList.add('hidden');
+            toggleLeftBtn.classList.remove('hidden');
+        });
+
+        // Logic for Right Panel
+        toggleRightBtn.addEventListener('click', () => {
+            rightPanel.classList.toggle('hidden');
+            toggleRightBtn.classList.toggle('hidden', !rightPanel.classList.contains('hidden'));
+        });
+        closeRightBtn.addEventListener('click', () => {
+            rightPanel.classList.add('hidden');
+            toggleRightBtn.classList.remove('hidden');
+        });
+
+        function updateAllToggles() {
+            toggleBtn.classList.toggle('hidden', bottomBar.classList.contains('active'));
+            toggleLeftBtn.classList.toggle('hidden', !leftPanel.classList.contains('hidden'));
+            toggleRightBtn.classList.toggle('hidden', !rightPanel.classList.contains('hidden'));
+        }
+
+        // Simular evento para actualizar botones tras carga (timeout para asegurar render)
+        const observePanels = new MutationObserver(() => updateAllToggles());
+        observePanels.observe(leftPanel, { attributes: true, attributeFilter: ['class'] });
+        observePanels.observe(rightPanel, { attributes: true, attributeFilter: ['class'] });
+        observePanels.observe(bottomBar, { attributes: true, attributeFilter: ['class'] });
+    </script>
+</body>
+</html>

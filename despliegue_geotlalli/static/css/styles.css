@@ -1,0 +1,573 @@
+:root {
+    --primary-color: #004b87; /* SOCIB Dark Blue */
+    --primary-hover: #003366; 
+    --secondary-color: #00a9e0; /* SOCIB Light Blue */
+    --panel-bg: rgba(255, 255, 255, 0.65); /* Más transparencia para minimalismo */
+    --glass-bg: #ffffff; 
+    --glass-border: #e2e8f0;
+    --text-color: #334155; /* Dark text for light background */
+    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); /* Sombra más difusa y elegante */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', 'Open Sans', sans-serif;
+    color: var(--text-color);
+    overflow: hidden; /* Prevent scrolling since everything is full-screen */
+}
+
+/* Map Container */
+#map {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+/* Side Panels */
+.side-panel {
+    position: absolute;
+    top: 80px;
+    bottom: 20px;
+    width: 400px;
+    background-color: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    transition: var(--transition);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-panel {
+    left: 20px;
+    transform: translateX(0);
+}
+
+.left-panel.hidden {
+    transform: translateX(-150%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.right-panel {
+    right: 20px;
+    transform: translateX(0);
+}
+
+.right-panel.hidden {
+    transform: translateX(150%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Accordion Styles */
+.accordion-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accordion-header {
+    padding: 15px 0;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.accordion-content.open {
+    max-height: 500px; /* Adjust based on expected content */
+    padding-bottom: 15px;
+}
+
+/* Panel Headers & Close Buttons */
+.side-panel h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgb(32, 64, 101);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #64748b;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    color: #ef4444;
+    transform: scale(1.1);
+}
+
+/* Panel Content Styling */
+.empty-state {
+    color: #94a3b8;
+    font-style: italic;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.info-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.info-card h3 {
+    font-size: 1rem;
+    color: #475569;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Photo Cards */
+.photos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.search-container {
+    display: contents; /* Desactivar contenedor visualmente pero mantener estructura si se desea */
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 30px;
+    padding: 0 15px;
+    height: 44px;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-box:focus-within {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    border-color: var(--primary-color);
+}
+
+.search-box input {
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    color: #1e293b !important;
+    font-size: 0.95rem;
+    width: 220px;
+    padding: 0 10px;
+}
+
+.search-box button#search-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.search-box button#search-btn:hover {
+    transform: scale(1.1);
+}
+
+.photo-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: var(--transition);
+}
+
+.photo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.photo-card.active {
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+    transform: scale(1.02);
+}
+
+.photo-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-caption {
+    padding: 12px;
+    font-size: 0.85rem;
+    color: #475569;
+    text-align: center;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Floating Controls */
+.map-controls {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.control-btn {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.control-btn:hover {
+    background: #f8fafc;
+    color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.control-btn i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Evitar traslape de controles con panel derecho - Removido el margen forzado que movía la atribución al centro */
+.leaflet-bottom.leaflet-right {
+    margin-right: 10px !important;
+    margin-bottom: 10px !important;
+    z-index: 800; /* Asegurar que quede por debajo de los paneles si es necesario */
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Data Cards para Datos Playas */
+.cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+.data-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+.data-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    border-color: var(--secondary-color);
+}
+.data-title {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.data-val {
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+.water-drop-icon {
+    background: transparent;
+    border: none;
+}
+.custom-tooltip {
+    background: #ffffff;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    font-family: 'Inter', sans-serif;
+    padding: 8px 12px;
+}
+
+/* Barra Inferior Desplegable Contextual */
+.bottom-info-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 80%;
+    max-width: 1000px;
+    background-color: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    z-index: 1500;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.4);
+    padding: 24px;
+    transition: var(--transition);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bottom-info-bar.active {
+    transform: translateX(-50%) translateY(0);
+}
+
+.bottom-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.bottom-info-header h2 {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.bottom-info-content {
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: block; /* Volver a layout normal para texto largo */
+    padding-right: 10px;
+}
+
+.toggle-info-btn {
+    z-index: 1400;
+}
+
+.toggle-side-btn {
+    z-index: 1400;
+}
+
+.toggle-side-btn.hidden, .toggle-info-btn.hidden {
+    display: none !important;
+}
+
+/* Estilos para las tarjetas dentro de la barra inferior para que combinen mejor */
+.bottom-info-bar .data-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc !important;
+}
+
+.bottom-info-bar .data-title {
+    color: #94a3b8 !important;
+}
+
+.bottom-info-bar .data-val {
+    color: #ffffff !important;
+}
+
+/* Revertir contenedor de tarjetas (ahora en panel lateral) */
+.bottom-info-bar .cards-container {
+    display: block !important;
+}
+
+/* Estilos específicos para unificar buscador */
+.search-box input#map-search {
+    background: #ffffff !important;
+    color: #1e293b !important;
+}
+
+.search-box button#search-btn {
+    color: var(--primary-color) !important;
+}
+
+/* Accordion Sidebar */
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.accordion-item {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.accordion-header {
+    padding: 12px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgb(32, 64, 101);
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.accordion-header i.fa-chevron-down {
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+}
+
+.accordion-item.active .accordion-header i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s;
+    padding: 0 15px;
+}
+
+.accordion-item.active .accordion-body {
+    max-height: 50000px; 
+    padding: 15px;
+    background: rgb(97, 109, 133);
+}
+
+.section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+/* Nested Accordion (Lineamientos) */
+.nested-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 5px 0;
+}
+
+.nested-accordion-item {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: var(--transition);
+}
+
+.nested-header {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.nested-header:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nested-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 12px;
+}
+
+.nested-accordion-item.active .nested-body {
+    max-height: 6000px;
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nested-accordion-item.active .nested-header {
+    color: var(--primary-color);
+}
+
+.empty-state-small {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Quitar recuadro de selección por defecto (blanco y negro) y usar línea negra delgada */
+.leaflet-interactive:focus,
+.leaflet-container:focus,
+path:focus {
+    outline: 1px solid #000000 !important;
+    outline-offset: 0 !important;
+}

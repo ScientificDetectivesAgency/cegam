@@ -80,6 +80,64 @@ En el mapa haz zoom a los puntos de las fotografías cuando el usuario de click 
 
 
 
+# 1. Borrar la carpeta venv corrupta/incompatible
+rm -rf /var/www/geotlalli/venv
+
+# 2. Crear un entorno virtual Linux limpio
+python3 -m venv /var/www/geotlalli/venv
+
+# 3. Activar el nuevo entorno virtual
+source /var/www/geotlalli/venv/bin/activate
+
+# 4. Instalar las dependencias de Python del proyecto
+pip install --upgrade pip
+pip install -r /var/www/geotlalli/requirements.txt
+pip install gunicorn
+
+# 5. Dar permisos correctos para que Nginx y Gunicorn puedan operar
+chown -R www-data:www-data /var/www/geotlalli
+find /var/www/geotlalli -type d -exec chmod 755 {} \;
+find /var/www/geotlalli -type f -exec chmod 644 {} \;
+
+# 6. Reiniciar el servicio
+systemctl restart gunicorn
+
+chmod +x /var/www/geotlalli/venv/bin/gunicorn
+systemctl restart gunicorn
+
+# 1. Asignar la propiedad de todos los archivos al servidor (www-data)
+chown -R www-data:www-data /var/www/geotlalli
+
+# 2. Dar permisos de lectura y ejecución generales
+chmod -R 755 /var/www/geotlalli
+chmod +x /var/www/geotlalli/venv/bin/gunicorn
+
+# 3. Recargar la configuración y reiniciar el servidor
+systemctl daemon-reload
+systemctl restart gunicorn
+systemctl restart nginx
+
+# 4. Comprobar que ya esté corriendo
+systemctl status gunicorn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

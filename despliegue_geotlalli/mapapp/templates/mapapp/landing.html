@@ -1,0 +1,701 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lineamientos de gestión para la zona costera - Estado de Quintana Roo</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@300;400;500&family=Inter:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ── Reset & Base ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            background-color: #0d1e33;
+            color: #f1f5f9;
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d1e33;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a3a5c;
+            border-radius: 4px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+        }
+
+        /* ── Header ── */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(26, 58, 92, 0.97) 0%, rgba(45, 106, 159, 0.97) 100%);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-title {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #f1f5f9;
+            letter-spacing: 0.02em;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        nav {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        nav a {
+            color: rgba(241, 245, 249, 0.75);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: 'Roboto', sans-serif;
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #f1f5f9;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ── HERO: Ken Burns + overlay fuerte ── */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: -8%;
+            background-image: url("{% static 'img/landing/s2.png' %}");
+            background-size: cover;
+            background-position: center;
+            animation: kenBurns 22s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        /* Ken Burns: zoom lento + ligero desplazamiento */
+        @keyframes kenBurns {
+            0% {
+                transform: scale(1.00) translate(0%, 0%);
+            }
+
+            33% {
+                transform: scale(1.06) translate(-1.5%, 0.5%);
+            }
+
+            66% {
+                transform: scale(1.10) translate(1%, -0.8%);
+            }
+
+            100% {
+                transform: scale(1.05) translate(-0.5%, 1%);
+            }
+        }
+
+        /* Overlay multicapa: más sólido con efecto blur para legibilidad */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg,
+                    rgba(13, 30, 51, 0.85) 0%,
+                    rgba(13, 30, 51, 0.45) 40%,
+                    rgba(13, 30, 51, 0.65) 70%,
+                    rgba(13, 30, 51, 0.95) 100%);
+            backdrop-filter: blur(3px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 820px;
+            padding: 0 24px;
+        }
+
+        /* Eyebrow: solo texto con shadow, sin caja */
+        .hero-eyebrow {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+            margin-bottom: 18px;
+            animation: fadeInUp 0.8s ease both;
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(2.4rem, 5.5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
+            margin-bottom: 20px;
+            animation: fadeInUp 0.9s 0.1s ease both;
+        }
+
+        .hero p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.12rem;
+            font-weight: 300;
+            color: rgba(203, 213, 225, 0.95);
+            line-height: 1.8;
+            margin-bottom: 44px;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 1s 0.2s ease both;
+        }
+
+        .hero-cta {
+            animation: fadeInUp 1s 0.3s ease both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            background: #1a3a5c;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            font-family: 'Roboto', sans-serif;
+            padding: 14px 34px;
+            border-radius: 50px;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            background: #0f2340;
+            box-shadow: 0 14px 32px -6px rgba(0, 0, 0, 0.55);
+        }
+
+        /* Scroll hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: rgba(241, 245, 249, 0.45);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-family: 'Roboto', sans-serif;
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        .scroll-hint-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid rgba(255, 255, 255, 0.4);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+            transform: rotate(45deg);
+            margin-bottom: 2px;
+        }
+
+        /* ── WAVE DIVIDER ── */
+        .wave-divider {
+            position: relative;
+            margin-top: -2px;
+            background: #0d1e33;
+            line-height: 0;
+        }
+
+        .wave-divider svg {
+            display: block;
+            width: 100%;
+        }
+
+        /* ── STATS SECTION — fondo sólido oscuro ── */
+        .parallax-section {
+            position: relative;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d1e33;
+            border-top: 1px solid rgba(26, 58, 92, 0.5);
+            border-bottom: 1px solid rgba(26, 58, 92, 0.5);
+        }
+
+        .parallax-content {
+            position: relative;
+            z-index: 2;
+            max-width: 920px;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .section-eyebrow {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgb(162, 121, 77);
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .parallax-content h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 800;
+            color: #f1f5f9;
+            letter-spacing: -0.02em;
+            margin-bottom: 18px;
+            line-height: 1.2;
+        }
+
+        .parallax-content p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.02rem;
+            color: #f3f3f3;
+            line-height: 1.8;
+            max-width: 680px;
+            margin: 0 auto 32px;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 52px;
+            flex-wrap: wrap;
+            margin-top: 44px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #e97b13;
+            line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        .stat-label {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 6px;
+        }
+
+        /* ── CARDS SECTION — ahora DESPUÉS del parallax ── */
+        .cards-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #f1f5f9;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 22px;
+        }
+
+        .info-card {
+            background: rgba(26, 58, 92, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(45, 106, 159, 0.3);
+            border-radius: 16px;
+            padding: 28px;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(94, 174, 212, 0.6), transparent);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.45);
+            border-color: rgba(94, 174, 212, 0.4);
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            line-height: 1.65;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* ── PHOTO STRIP ── */
+        .photo-strip {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 340px;
+            overflow: hidden;
+        }
+
+        .strip-img {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .strip-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            filter: brightness(0.75) saturate(1.1);
+        }
+
+        .strip-img:hover img {
+            transform: scale(1.05);
+            filter: brightness(0.9) saturate(1.3);
+        }
+
+        .strip-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            background: linear-gradient(0deg, rgba(13, 30, 51, 0.85), transparent);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(241, 245, 249, 0.85);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: #071525;
+            padding: 48px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(26, 58, 92, 0.6);
+        }
+
+        .logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .logo-placeholder {
+            width: 120px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .footer-text {
+            color: #475569;
+            font-size: 0.85rem;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(8px);
+            }
+        }
+
+        /* ── Reveal on scroll ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.1rem;
+            }
+
+            .photo-strip {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .strip-img {
+                height: 220px;
+            }
+
+            .stats-row {
+                gap: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── Header ── -->
+    <header class="app-header">
+        <img src="{% static 'img/LOGO1.jpeg' %}" alt="Logo" style="height: 40px; margin-right: 15px; border-radius: 4px;">
+        <span class="header-title">Lineamientos de gestión para la zona costera - Estado de Quintana Roo</span>
+        <nav>
+            <a href="{% url 'mapapp:landing' %}" class="active">Inicio</a>
+            <a href="{% url 'mapapp:mapa' %}">Mapa</a>
+            <a href="{% url 'mapapp:acerca' %}">Acerca de</a>
+        </nav>
+    </header>
+
+    <!-- ── HERO: Ken Burns + overlay fuerte ── -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-eyebrow">Quintana Roo &nbsp;·&nbsp; México</span>
+            <h1>Gestión de la Zona Costera de Quintana Roo</h1>
+            <p>Lineamientos de gestión para la zona costera del Estado de Quintana Roo</p>
+            <div class="hero-cta">
+                <a href="{% url 'mapapp:mapa' %}" class="btn-primary">Acceder al Visualizador</a>
+            </div>
+        </div>
+        <div class="scroll-hint">
+            <div class="scroll-hint-arrow"></div>
+            <span>Desplaza</span>
+        </div>
+    </section>
+
+    <!-- ── WAVE DIVIDER ── -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <path fill="#0d1e33" d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" />
+        </svg>
+    </div>
+
+    <!-- ── 1. STATS: Sobre el Proyecto (fondo sólido) ── -->
+    <section class="parallax-section">
+        <div class="parallax-content reveal">
+            <span class="section-eyebrow">Sobre el Proyecto</span>
+            <h2>Sistema interactivo de visualización costera</h2>
+            <p>Esta plataforma web interactiva permite explorar lineamientos de gestión, tipologías costeras, fichas
+                técnicas y acervos fotográficos de todo el litoral estatal. Integra información territorial, ambiental y
+                normativa en un solo sistema, facilitando la consulta, el análisis y la comunicación para la gestión
+                costera integral.</p>
+            <a href="{% url 'mapapp:mapa' %}" class="btn-primary" style="display: inline-flex; margin: 0 auto;">Explorar
+                el Mapa</a>
+
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Celdas costeras</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">21</div>
+                    <div class="stat-label">Subceldas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1,500+</div>
+                    <div class="stat-label">km de costa</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">300+</div>
+                    <div class="stat-label">Fotos georef.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── PHOTO STRIP: entre secciones ── -->
+    <div class="photo-strip">
+        <div class="strip-img">
+            <img src="{% static 'img/landing/QR-I-00-02_02.jpg' %}" alt="Costa norte de Holbox, vista aérea">
+            <div class="strip-label">Isla Holbox, Celda QR-I</div>
+        </div>
+        <div class="strip-img">
+            <img src="{% static 'img/landing/QR-I-00-02_01.jpg' %}" alt="Embarcadero de Holbox">
+            <div class="strip-label">Puerto Holbox, zona norte</div>
+        </div>
+    </div>
+
+    <!-- ── 2. CARDS: Capas de Datos ── -->
+    <section class="cards-section reveal" id="capas">
+        <div class="section-header">
+            <span class="section-eyebrow">Objetvos del proyecto</span>
+            <h2>Lineamientos</h2>
+        </div>
+        <div class="cards-grid">
+            <div class="info-card reveal">
+                <h3>Lineamientos estatales integrales</h3>
+                <p>Consulta el conjunto completo de lineamientos de gestión para todo el litoral del estado, organizados
+                    en cinco categorías temáticas estratégicas.</p>
+            </div>
+            <div class="info-card reveal">
+                <h3>Tipologías costeras</h3>
+                <p>Conoce las dieciséis tipologías costeras características del estado, definidas a partir de sus
+                    condiciones físicas, ecológicas y territoriales.</p>
+            </div>
+            <div class="info-card reveal">
+                <h3>Gestión específica por tipología</h3>
+                <p>Subdivisiones detalladas con arquetipos doctrinales, caracterización específica y lineamientos
+                    operativos para cada subcelda del litoral quintanarroense.</p>
+            </div>
+            <div class="info-card reveal">
+                <h3>Caracterización de tramos costeros</h3>
+                <p>Accede a fichas detalladas de cada tramo costero, incluyendo información geomorfológica,
+                    sedimentaria, ecológica y antrópica.</p>
+            </div>
+            <div class="info-card reveal">
+                <h3>Instrumentos de aplicación territorial</h3>
+                <p>Revisa el listado integral de lineamientos aplicables para cada tramo, articulados con políticas y
+                    herramientas de gestión territorial.</p>
+            </div>
+            <div class="info-card reveal">
+                <h3>Marco normativo y gobernanza</h3>
+                <p>Identifica la relación entre los lineamientos, la Política de Costas del Estado, los instrumentos
+                    municipales vigentes y la normativa federal aplicable.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="footer">
+        <p class="footer-text">&copy; 2026 Centro de Especialistas en Gestión Ambiental (CEGAM). Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        // ── Reveal on scroll ──
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+        reveals.forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>

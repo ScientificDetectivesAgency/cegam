@@ -7,8 +7,27 @@ django.setup()
 from django.db import connection
 
 with connection.cursor() as cursor:
-    cursor.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'datos' AND table_name = 'subcel_qr_n2' ORDER BY ordinal_position")
-    columns = cursor.fetchall()
-    print("Columns for datos.subcel_qr_n2:")
-    for col in columns:
-        print(f" - {col[0]}: {col[1]}")
+    query = """
+        SELECT lin_eros, lin_cons, lin_aprv, lin_infr, lin_rsgo, lin_mrco
+        FROM datos.meta2
+        WHERE cod_trm = %s
+    """
+    cursor.execute(query, ['QR-I-a-01'])
+    row = cursor.fetchone()
+    print("QueryResult from datos.meta2:")
+    if row:
+        titles = [
+            "lin_eros",
+            "lin_cons",
+            "lin_aprv",
+            "lin_infr",
+            "lin_rsgo",
+            "lin_mrco"
+        ]
+        for t, val in zip(titles, row):
+            print(f"  {t}: {repr(val)[:60]}")
+    else:
+        print("No row found!")
+
+
+
