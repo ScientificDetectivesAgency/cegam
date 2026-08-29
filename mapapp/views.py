@@ -57,8 +57,6 @@ def landing(request):
 def mapa(request):
     return render(request, 'mapapp/index.html')
 
-def mapa_v2(request):
-    return render(request, 'mapapp/index_v2.html')
 
 def acerca(request):
     return render(request, 'mapapp/acerca.html')

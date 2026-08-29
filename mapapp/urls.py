@@ -6,7 +6,6 @@ app_name = 'mapapp'
 urlpatterns = [
     path('', views.landing, name='landing'),
     path('mapa/', views.mapa, name='mapa'),
-    path('mapa-v2/', views.mapa_v2, name='mapa_v2'),
     path('acerca/', views.acerca, name='acerca'),
     path('api/puntos/', views.api_puntos, name='api_puntos'),
     path('api/puntos/<int:pk>/', views.api_punto_detalle, name='api_punto_detalle'),

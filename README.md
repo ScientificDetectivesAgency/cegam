@@ -5,17 +5,14 @@ Este proyecto es un visualizador geográfico basado en Django, Leaflet y PostGIS
 ## Inicio Rápido
 
 ### 1. Requisitos
-- Python 3.12+
+- Python 3.10+
 - PostgreSQL 15+ con extensión PostGIS.
 - OSGeo4W (para soporte GDAL/GEOS en Windows).
 
 ### 2. Instalación
 ```bash
-# Crear entorno virtual
 python -m venv venv
-# Activar entorno (Windows)
 .\venv\Scripts\activate
-# Instalar dependencias
 pip install -r requirements.txt
 ```
 
@@ -30,5 +27,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+Acceso al visor: **http://127.0.0.1:8000/mapa/**
+
 ## Documentación Completa
-Para instrucciones detalladas de configuración de ambientes y despliegue en producción, consulte el [Manual de Instalación](MANUAL_INSTALACION.md).
+Para instrucciones detalladas de instalación y despliegue en producción, consulte el [Manual de Instalación](MANUAL_INSTALACION.md).
